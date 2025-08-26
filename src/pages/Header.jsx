@@ -1,13 +1,14 @@
 import React, { useEffect, useState } from 'react'
 import NavItems from '../components/NavItems'
 import { Moon, Sun } from 'lucide-react';
-import '../App.css'
+import { Link } from 'react-router-dom';
 
-export default function Header() {
-    const [scroll, setScroll] = useState(false);
+import '../App.css'
+import { FetchNews } from '../api/NewsApi';
+export default function Header({ setArticle }) {
     const [theme, setTheme] = useState(false);
     const [menu, setMenu] = useState(false);
-    const [text, setText] = useState("");
+    const [text, setText] = useState(NavItems[0]);
 
     function handleMenu() {
         setMenu(!menu);
@@ -23,29 +24,24 @@ export default function Header() {
     }
 
     useEffect(() => {
-        const handleScroll = () => {
-            if (window.scrollY > 10) {
-                setScroll(true);
-            } else {
-                setScroll(false);
-            }
+        const reqAPI = async () => {
+            const data = await FetchNews(text);
+            setArticle(data);
         }
-
-        window.addEventListener("scroll", handleScroll);
-        return () => {
-            window.removeEventListener("scroll", handleScroll);
-        }
-    }, []);
+        reqAPI();
+    }, [text]);
 
     return (
         <div className={`fixed w-full ${theme ? "bg-gray-900 text-white" : "bg-white"} z-10 shadow-md`}>
-            <div className={`myfont max-w-7xl m-auto py-4 transition-all duration-300 ${scroll ? 'bg-white shadow' : 'bg-transparent'}`}>
+            <div className={`myfont max-w-7xl m-auto py-4 transition-all duration-300`}>
                 <div className='flex items-center justify-between px-6'>
                     <div className='text-2xl bg-gradient-to-l from-green-400 to-orange-600 bg-clip-text text-transparent font-bold'>NewsIndia</div>
                     <div className='hidden lg:flex items-center gap-4 font-light group'>
                         {NavItems.map(item => (
-                            <div className='group-hover:duration-300' key={item}>
-                                <a href={item}>{item}</a>
+                            <div className={`cursor-pointer ${text === item ? 'text-blue-500 font-bold' : 'text-gray-500'}`}
+                            onClick={() => setText(item)}
+                            key={item}>
+                                <Link to={`${item.toLowerCase()}`}>{item}</Link>
                             </div>
                         ))}
                     </div>
@@ -79,27 +75,24 @@ export default function Header() {
             {menu && (
                 <div className='flex flex-col py-2 group'>
                     {NavItems.map(item => (
-                        <a
+                        <Link
                             key={item}
-                            href={item}
+                            to={`${item.toLowerCase()}`}
+                            onClick={() => setMenu(false)}
                             className='px-4 py-2 rounded hover:bg-gray-200 hover:text-gray-900 transition-colors duration-200'
                         >
                             {item}
-                        </a>
+                        </Link>
                     ))}
                     <div className='flex items-center justify-center p-2'>
                         <button
-                            className={`sm:hidden inline p-2 rounded-full 
-                                cursor-pointer ${theme ? "text-white bg-indigo-800" : "bg-yellow-400 text-yellow-700"}`}
+                            className={`sm:hidden inline p-2 rounded-full cursor-pointer ${theme ? "text-white bg-indigo-800" : "bg-yellow-400 text-yellow-700"}`}
                             onClick={handleTheme}>
                             {theme ? (<Moon size={18} />) : (<Sun size={18} />)}
                         </button>
                     </div>
                 </div>
             )}
-            <div className='text-4xl'>
-                {text}
-            </div>
         </div>
     )
 }
