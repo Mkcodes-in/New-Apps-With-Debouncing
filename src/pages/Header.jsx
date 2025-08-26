@@ -5,7 +5,7 @@ import { Link } from 'react-router-dom';
 
 import '../App.css'
 import { FetchNews } from '../api/NewsApi';
-export default function Header({ setArticle }) {
+export default function Header({ setArticle, loader, setLoader }) {
     const [theme, setTheme] = useState(false);
     const [menu, setMenu] = useState(false);
     const [text, setText] = useState(NavItems[0]);
@@ -27,6 +27,7 @@ export default function Header({ setArticle }) {
             setArticle([]);
             return;
         }
+        setLoader(true);
 
         const handler = setTimeout(async () => {
             try {
@@ -35,9 +36,12 @@ export default function Header({ setArticle }) {
             } catch (error) {
                 console.error("API Error:", error);
             }
+            finally {
+                setLoader(false);
+            }
         }, 500);
 
-        return () => clearTimeout(handler); 
+        return () => clearTimeout(handler);
     }, [text]);
 
 
