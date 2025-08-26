@@ -20,16 +20,26 @@ export default function Header({ setArticle }) {
 
     function handleSubmit(e) {
         e.preventDefault();
-        setText("");
     }
 
     useEffect(() => {
-        const reqAPI = async () => {
-            const data = await FetchNews(text);
-            setArticle(data);
+        if (!text) {
+            setArticle([]);
+            return;
         }
-        reqAPI();
+
+        const handler = setTimeout(async () => {
+            try {
+                const data = await FetchNews(text);
+                setArticle(data);
+            } catch (error) {
+                console.error("API Error:", error);
+            }
+        }, 500);
+
+        return () => clearTimeout(handler); 
     }, [text]);
+
 
     return (
         <div className={`fixed w-full ${theme ? "bg-gray-900 text-white" : "bg-white"} z-10 shadow-md`}>
@@ -39,8 +49,8 @@ export default function Header({ setArticle }) {
                     <div className='hidden lg:flex items-center gap-4 font-light group'>
                         {NavItems.map(item => (
                             <div className={`cursor-pointer ${text === item ? 'text-blue-500 font-bold' : 'text-gray-500'}`}
-                            onClick={() => setText(item)}
-                            key={item}>
+                                onClick={() => setText(item)}
+                                key={item}>
                                 <Link to={`${item.toLowerCase()}`}>{item}</Link>
                             </div>
                         ))}
