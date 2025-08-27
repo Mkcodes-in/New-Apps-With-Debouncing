@@ -1,16 +1,19 @@
-import React from 'react';
+import React, { useContext } from 'react';
 import '../App.css';
 import { Loader2 } from 'lucide-react';
+import { ThemeContext } from '../context/ThemeChanger';
 
 export default function Content({ article, loader }) {
+  const theme = useContext(ThemeContext);
+  const mytheme = theme.theme;
   return (
-    <section className="myfont max-w-7xl mx-auto py-26 px-4">
+    <section className={`myfont max-w-7xl mx-auto py-26 px-4`}>
       {loader ? (
-        <div className="text-center py-44">
+        <div className="text-center py-52">
           <Loader2 className='text-orange-600 animate-spin mx-auto' size={30} />
         </div>
       ) : article.length === 0 ? (
-        <div className="text-2xl font-semibold text-gray-800 py-44 text-center">
+        <div className="text-2xl font-semibold text-gray-800 py-52 text-center">
           No result found ):
         </div>
       ) : (
@@ -23,7 +26,7 @@ export default function Content({ article, loader }) {
             {article.map((item, idx) => (
               <div
                 key={idx}
-                className="rounded-xl overflow-hidden border border-gray-200 shadow-lg hover:shadow-2xl transition-shadow duration-300 bg-white"
+                className={`rounded-xl overflow-hidden border shadow-lg hover:shadow-2xl transition-shadow duration-300 ${mytheme ? "bg-gray-950 border-gray-400/20" : "bg-white border-gray-200"}`}
               >
                 <img
                   className="w-full h-48 object-cover"
@@ -32,10 +35,10 @@ export default function Content({ article, loader }) {
                 />
 
                 <div className="p-4 flex flex-col gap-2">
-                  <h1 className="text-sm font-semibold text-gray-600">{item.author}</h1>
-                  <h2 className="text-lg font-bold text-gray-900">{item.title}</h2>
-                  <p className="text-sm text-gray-700 line-clamp-3">{item.description}</p>
-                  <div className="text-sm text-gray-500 line-clamp-2">{item.content}</div>
+                  <h1 className={`text-sm font-semibold ${mytheme ? "" : "text-gray-600"}`}>{item.author}</h1>
+                  <h2 className={`text-lg font-bold ${mytheme ? "" : "text-gray-900 "}`}>{item.title}</h2>
+                  <p className={`text-sm ${mytheme ? "" : "text-gray-700"} line-clamp-3`}>{item.description}</p>
+                  <div className={`text-sm line-clamp-2 ${mytheme ? "text-gray-50/70" : "text-gray-500"}`}>{item.content}</div>
 
                   <a
                     href={item.url}

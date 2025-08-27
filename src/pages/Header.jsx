@@ -1,12 +1,13 @@
-import React, { useEffect, useState } from 'react'
+import React, { useContext, useEffect, useState } from 'react'
 import NavItems from '../components/NavItems'
 import { Moon, Sun } from 'lucide-react';
-import { Link } from 'react-router-dom';
+import { Link, NavLink } from 'react-router-dom';
 
 import '../App.css'
 import { FetchNews } from '../api/NewsApi';
-export default function Header({ setArticle, loader, setLoader }) {
-    const [theme, setTheme] = useState(false);
+import { ThemeContext } from '../context/ThemeChanger';
+export default function Header({ setArticle, setLoader }) {
+    const { theme, handleTheme } = useContext(ThemeContext);
     const [menu, setMenu] = useState(false);
     const [text, setText] = useState(NavItems[0]);
 
@@ -14,8 +15,9 @@ export default function Header({ setArticle, loader, setLoader }) {
         setMenu(!menu);
     }
 
-    function handleTheme() {
-        setTheme(!theme);
+    function handleClick(item) {
+        setText(item);
+        setMenu(false);
     }
 
     function handleSubmit(e) {
@@ -46,13 +48,14 @@ export default function Header({ setArticle, loader, setLoader }) {
 
 
     return (
-        <div className={`fixed w-full ${theme ? "bg-gray-900 text-white" : "bg-white"} z-10 shadow-md`}>
+        <div className={`fixed w-full ${theme ? "bg-gray-900 text-white" : "bg-white text-black"} z-10 shadow-md`}>
             <div className={`myfont max-w-7xl m-auto py-4 transition-all duration-300`}>
                 <div className='flex items-center justify-between px-6'>
                     <div className='text-2xl bg-gradient-to-l from-green-400 to-orange-600 bg-clip-text text-transparent font-bold'>NewsIndia</div>
                     <div className='hidden lg:flex items-center gap-4 font-light group'>
                         {NavItems.map(item => (
-                            <div className={`cursor-pointer ${text === item ? 'text-blue-500 font-bold' : 'text-gray-500'}`}
+                            <div className={`cursor-pointer ${text === item ? 'text-blue-500 font-bold' : ""} ${theme ? ' text-white' : 'bg-white text-black'}`}
+
                                 onClick={() => setText(item)}
                                 key={item}>
                                 <Link to={`${item.toLowerCase()}`}>{item}</Link>
@@ -92,8 +95,8 @@ export default function Header({ setArticle, loader, setLoader }) {
                         <Link
                             key={item}
                             to={`${item.toLowerCase()}`}
-                            onClick={() => setMenu(false)}
-                            className='px-4 py-2 rounded hover:bg-gray-200 hover:text-gray-900 transition-colors duration-200'
+                            onClick={() => handleClick(item)}
+                            className={`px-4 py-2 rounded hover:bg-gray-200 hover:text-gray-900 transition-colors duration-200 ${text === item ? "text-blue-500 font-bold" : "text-gray-500"}`}
                         >
                             {item}
                         </Link>
