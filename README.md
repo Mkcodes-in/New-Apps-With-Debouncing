@@ -4,7 +4,7 @@ A modern, responsive news application built with React featuring smooth UX with 
 
 Features
 
-📰 Latest News: Fetches real-time news from [API name or source].
+📰 Latest News: Fetches real-time news from Newsapi.org.
 
 🎨 Light & Dark Theme: Toggle between themes with smooth transitions; theme preference saved in localStorage.
 
